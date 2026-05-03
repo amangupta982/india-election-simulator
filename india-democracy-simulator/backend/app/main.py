@@ -1,4 +1,12 @@
-"""FastAPI main application."""
+"""FastAPI main application for India Democracy Simulator.
+
+This module bootstraps the FastAPI application with:
+- CORS middleware for cross-origin frontend requests
+- Request ID tracking and structured logging middleware
+- WebSocket support for real-time game state updates
+- Health check endpoint reporting Google Cloud service status
+- Routers for auth, game, constituencies, leaderboard, and feedback
+"""
 import logging
 import time
 import uuid
@@ -84,11 +92,17 @@ app.include_router(leaderboard_router, prefix=settings.api_v1_prefix)
 app.include_router(feedback_router, prefix=settings.api_v1_prefix)
 
 
-@app.get("/health")
+@app.get("/health", tags=["monitoring"])
 async def health():
+    """Health check endpoint for Cloud Run liveness/readiness probes.
+
+    Returns:
+        dict: Application status and Google Cloud service availability.
+    """
     return {
         "status": "ok",
         "app": settings.app_name,
+        "version": "1.0.0",
         "google_cloud": {
             "firebase": settings.firebase_enabled,
             "firestore": settings.firestore_enabled,

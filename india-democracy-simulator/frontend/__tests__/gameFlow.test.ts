@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Integration tests for game flow and state management
  * Tests the store operations and game state lifecycle
