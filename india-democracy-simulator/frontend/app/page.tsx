@@ -1,31 +1,39 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
-const STATS = [
-  { label: "Lok Sabha Seats", value: 543, suffix: "" },
-  { label: "States & UTs", value: 36, suffix: "" },
-  { label: "Political Parties", value: 42, suffix: "" },
-  { label: "Majority Mark", value: 272, suffix: " seats" },
-];
+/* ═══════════════════════════════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════════════════════════════ */
 
 const PARTIES = [
-  { name: "BJP", seats: 248, color: "#FF9933" },
-  { name: "INC", seats: 100, color: "#00BCD4" },
-  { name: "SP", seats: 37, color: "#E60000" },
-  { name: "TMC", seats: 29, color: "#00A651" },
-  { name: "DMK", seats: 22, color: "#CC0000" },
-  { name: "Others", seats: 107, color: "#2A2E45" },
+  { name: "BJP", seats: 272, pct: "50.1%", trend: "+12", color: "#FF9933", icon: "🪷" },
+  { name: "INC", seats: 136, pct: "28.3%", trend: "+8", color: "#00BCD4", icon: "✋" },
+  { name: "SP", seats: 37, pct: "6.8%", trend: "+3", color: "#E60000", icon: "🚲" },
+  { name: "TMC", seats: 29, pct: "5.2%", trend: "+2", color: "#00A651", icon: "🌸" },
+  { name: "OTHERS", seats: 69, pct: "9.6%", trend: "+9", color: "#9C88FF", icon: "🏛️" },
 ];
 
-const ROLES = [
-  { id: "party_leader", icon: "👑", name: "Party Leader", desc: "Lead the nation. Every rally, every alliance, every crisis — your call.", difficulty: "Hard" },
-  { id: "campaign_manager", icon: "📊", name: "Campaign Manager", desc: "Budget, booth agents, media narrative — the strategist's chair.", difficulty: "Medium" },
-  { id: "swing_voter", icon: "🗳️", name: "Swing Voter", desc: "Represent millions of undecided voters. Watch. Judge. Decide.", difficulty: "Easy" },
-  { id: "election_commission", icon: "⚖️", name: "Election Officer", desc: "Guard democracy. Handle EVMs, violations, and voter fraud.", difficulty: "Expert" },
+const STATS = [
+  { label: "LOK SABHA SEATS", value: 543, sub: "All Constituencies", icon: "👥", color: "#FF6B2B" },
+  { label: "STATES & UTs", value: 36, sub: "Pan India Coverage", icon: "🗺️", color: "#00BCD4" },
+  { label: "POLITICAL PARTIES", value: 42, sub: "Real 2024 Data", icon: "🏛️", color: "#9C88FF" },
+  { label: "SEATS TO WIN", value: 272, sub: "Majority Mark", icon: "🏆", color: "#FFD700" },
 ];
+
+const CLIMATE_CARDS = [
+  { title: "SWING STATES", sub: "UP, Maharashtra, Bihar, Karnataka", tag: "High Impact", tagColor: "#FF6B2B", icon: "📊" },
+  { title: "VOTER SENTIMENT", sub: "Youth vote ↑ 12%\nUrban shift detected", tag: "Dynamic", tagColor: "#00BCD4", icon: "👥" },
+  { title: "MEDIA INFLUENCE", sub: "High\nSocial media surge", tag: "Trending", tagColor: "#9C88FF", icon: "📱" },
+  { title: "ECONOMIC FACTOR", sub: "Inflation impact\nCost of living key", tag: "Critical", tagColor: "#E74C3C", icon: "₹" },
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   ANIMATED COUNTER
+   ═══════════════════════════════════════════════════════════════════ */
 
 function AnimatedCounter({ target, duration = 2000 }: { target: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -42,234 +50,311 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
   return <>{count}</>;
 }
 
-export default function LandingPage() {
+/* ═══════════════════════════════════════════════════════════════════
+   PARTICLE FIELD
+   ═══════════════════════════════════════════════════════════════════ */
+
+function ParticleField() {
+  const [particles, setParticles] = useState<Array<{
+    left: string; top: string; delay: string; dur: string; bg: string; size: string;
+  }>>([]);
+
+  useEffect(() => {
+    const colors = [
+      "rgba(255,107,43,0.4)", "rgba(19,136,8,0.4)",
+      "rgba(0,188,212,0.3)", "rgba(156,136,255,0.3)",
+    ];
+    setParticles(
+      Array.from({ length: 60 }, (_, i) => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 10}s`,
+        dur: `${6 + Math.random() * 8}s`,
+        bg: colors[i % 4],
+        size: `${1.5 + Math.random() * 2.5}px`,
+      }))
+    );
+  }, []);
+
   return (
-    <main className="relative min-h-screen overflow-hidden">
-      {/* Animated background particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 40 }).map((_, i) => (
-          <div
-            key={i}
-            className="particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 8}s`,
-              animationDuration: `${5 + Math.random() * 5}s`,
-              background:
-                i % 3 === 0 ? "rgba(255,107,43,0.5)" :
-                i % 3 === 1 ? "rgba(19,136,8,0.5)" :
-                "rgba(0,0,128,0.5)",
-              width: `${2 + Math.random() * 3}px`,
-              height: `${2 + Math.random() * 3}px`,
-            }}
-          />
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="particle"
+          style={{
+            left: p.left, top: p.top,
+            animationDelay: p.delay, animationDuration: p.dur,
+            background: p.bg, width: p.size, height: p.size,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INDIA MAP — Real constituency map image with glow effects
+   ═══════════════════════════════════════════════════════════════════ */
+
+function IndiaMap() {
+  return (
+    <div className="india-map-container">
+      {/* Ambient glow behind the map */}
+      <div className="map-ambient-glow" />
+      {/* Real India map image */}
+      <Image
+        src="/india-map-glow.png"
+        alt="India Election Map with constituency boundaries and heatmap coloring"
+        width={680}
+        height={680}
+        priority
+        className="india-map-image"
+      />
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIVE RESULTS PANEL
+   ═══════════════════════════════════════════════════════════════════ */
+
+function LiveResultsPanel() {
+  const total = PARTIES.reduce((a, p) => a + p.seats, 0);
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.6, duration: 0.8 }}
+      className="live-results-panel"
+    >
+      {/* Header */}
+      <div className="panel-header">
+        <div className="live-dot-wrapper">
+          <span className="live-dot" />
+          <span className="panel-title">LIVE RESULTS</span>
+        </div>
+        <span className="panel-subtitle">543 / 543 Constituencies</span>
+      </div>
+
+      {/* Party rows */}
+      <div className="party-list">
+        {PARTIES.map((party, i) => (
+          <motion.div
+            key={party.name}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.8 + i * 0.1 }}
+            className="party-row"
+          >
+            <div className="party-icon" style={{ background: `${party.color}20`, borderColor: `${party.color}40` }}>
+              <span>{party.icon}</span>
+            </div>
+            <div className="party-name" style={{ color: party.color }}>{party.name}</div>
+            <div className="party-seats">
+              <span className="seats-value"><AnimatedCounter target={party.seats} /></span>
+            </div>
+            <div className="party-meta">
+              <span className="trend-up">↑ {party.trend}</span>
+              <span className="party-pct">{party.pct}</span>
+            </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* ═══ Hero Section ═══ */}
-      <section className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center">
-        {/* Ashoka Chakra ring */}
-        <motion.div
-          initial={{ scale: 0, rotate: -180, opacity: 0 }}
-          animate={{ scale: 1, rotate: 0, opacity: 1 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
-          className="mb-10"
-        >
-          <div className="relative w-36 h-36">
-            <div className="absolute inset-0 rounded-full border-[3px] border-[#000080]/20 spin-slow" />
-            <div className="absolute inset-2 rounded-full border-2 border-[#FF6B2B]/15" />
-            <div className="absolute inset-4 rounded-full border border-[#138808]/10" />
-            <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#FF6B2B]/10 via-transparent to-[#138808]/10 flex items-center justify-center backdrop-blur-sm">
-              <span className="text-4xl">🏛️</span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.9 }}
-          className="font-[family-name:var(--font-outfit)] text-5xl sm:text-6xl md:text-8xl font-extrabold mb-6 leading-[0.95] tracking-tight"
-        >
-          <span className="bg-gradient-to-r from-[#FF6B2B] via-white to-[#138808] bg-clip-text text-transparent">
-            India Election
-          </span>
-          <br />
-          <span className="text-white/90">Simulator</span>
-          <motion.span
-            className="text-[#FF6B2B]"
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >.</motion.span>
-        </motion.h1>
-
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mb-10 leading-relaxed"
-        >
-          543 constituencies. One majority. Can you win it?
-          <br />
-          <span className="text-[var(--text-muted)]">
-            AI-powered civic education game built on real 2024 Lok Sabha data.
-          </span>
-        </motion.p>
-
-        {/* CTA — Magnetic hover */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.9, duration: 0.5 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <Link href="/login">
-            <button className="btn-saffron text-lg px-14 py-5 rounded-2xl">
-              Start Simulation →
-            </button>
-          </Link>
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 w-full max-w-3xl"
-        >
-          {STATS.map((stat, i) => (
+      {/* Seat distribution bar */}
+      <div className="seat-bar-container">
+        <div className="seat-bar">
+          {PARTIES.map((party) => (
             <motion.div
-              key={stat.label}
-              whileHover={{ scale: 1.04, y: -3 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="glass-card-sm p-5 text-center group hover:border-[#FF6B2B]/15 cursor-default"
-            >
-              <div className="font-[family-name:var(--font-space)] text-3xl md:text-4xl font-extrabold text-[#FF6B2B]">
-                <AnimatedCounter target={stat.value} />
-                {stat.suffix}
-              </div>
-              <div className="text-xs text-[var(--text-muted)] mt-2 uppercase tracking-wider font-medium">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* 2024 Actual Results Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 1 }}
-          className="mt-14 w-full max-w-2xl"
-        >
-          <p className="text-[10px] text-[var(--text-muted)] mb-3 text-center uppercase tracking-[0.2em] font-semibold">
-            2024 Actual Results
-          </p>
-          <div className="flex h-10 rounded-2xl overflow-hidden border border-white/5 relative">
-            <div
-              className="absolute top-0 bottom-0 w-[2px] bg-white/60 z-10 shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-              style={{ left: `${(272 / 543) * 100}%` }}
+              key={party.name}
+              initial={{ width: 0 }}
+              animate={{ width: `${(party.seats / total) * 100}%` }}
+              transition={{ delay: 1.4, duration: 1, ease: "easeOut" }}
+              className="seat-bar-segment"
+              style={{ background: party.color }}
             />
-            {PARTIES.map((p) => (
-              <motion.div
-                key={p.name}
-                initial={{ width: 0 }}
-                animate={{ width: `${(p.seats / 543) * 100}%` }}
-                transition={{ delay: 1.8, duration: 1.2, ease: "easeOut" }}
-                className="relative group flex items-center justify-center text-[10px] font-bold cursor-default"
-                style={{ background: p.color }}
-                title={`${p.name}: ${p.seats} seats`}
-              >
-                {p.seats > 25 && (
-                  <span className="drop-shadow-lg text-white/90">{p.name}</span>
-                )}
-              </motion.div>
-            ))}
-          </div>
-          <div className="flex justify-between text-[10px] text-[var(--text-muted)] mt-2 px-1">
-            <span>0</span>
-            <span className="text-[#FF6B2B] font-semibold">↑ 272 Majority</span>
-            <span>543</span>
-          </div>
-        </motion.div>
-
-        {/* Role Preview Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.0, duration: 0.8 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-20 w-full max-w-5xl"
-        >
-          {ROLES.map((role, i) => (
-            <motion.div
-              key={role.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.2 + i * 0.1 }}
-              whileHover={{ scale: 1.03, y: -5 }}
-              className="glass-card-glow p-6 text-left cursor-pointer group"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <motion.span
-                  className="text-3xl inline-block"
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  {role.icon}
-                </motion.span>
-                <span className={`badge ${
-                  role.difficulty === "Easy" ? "badge-booth" :
-                  role.difficulty === "Medium" ? "badge-rally" :
-                  role.difficulty === "Hard" ? "badge-crisis" :
-                  "badge-scam"
-                }`}>
-                  {role.difficulty}
-                </span>
-              </div>
-              <h3 className="font-[family-name:var(--font-outfit)] text-lg font-bold mb-2 group-hover:text-[#FF6B2B] transition-colors">
-                {role.name}
-              </h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{role.desc}</p>
-            </motion.div>
           ))}
-        </motion.div>
+        </div>
+        <div className="majority-label">
+          <span>🏆</span> 272 to Win
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
-        {/* Feature highlights */}
+/* ═══════════════════════════════════════════════════════════════════
+   MAIN LANDING PAGE
+   ═══════════════════════════════════════════════════════════════════ */
+
+export default function LandingPage() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => { setIsLoaded(true); }, []);
+
+  return (
+    <main className="landing-page">
+      <ParticleField />
+
+      {/* ═══ TOP NAVBAR ═══ */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="top-navbar"
+      >
+        <div className="nav-left">
+          <div className="nav-logo">
+            <span className="logo-icon">🏛️</span>
+            <span className="logo-text">
+              India <span className="logo-accent">Election Simulator</span>
+            </span>
+          </div>
+        </div>
+        <div className="nav-right">
+          <div className="nav-tag live-tag">
+            <span className="live-dot-sm" />
+            Live Simulation
+          </div>
+          <div className="nav-tag year-tag">2024 Lok Sabha</div>
+        </div>
+      </motion.nav>
+
+      {/* ═══ HERO: 3-column layout ═══ */}
+      <section className="hero-section">
+        {/* LEFT — Headline */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.6, duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-16 w-full max-w-4xl"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="hero-left"
         >
-          {[
-            { icon: "🎯", title: "Real 2024 Data", desc: "563 actual constituencies with real margins, winners, and party data" },
-            { icon: "🤖", title: "AI Opponent", desc: "Adversarial AI that counter-strategies your every move in real-time" },
-            { icon: "📚", title: "Civics Education", desc: "Every decision teaches real Indian electoral mechanics and history" },
-          ].map((f) => (
-            <motion.div
-              key={f.title}
-              whileHover={{ scale: 1.03, y: -4 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="glass-card p-7 hover:border-[#FF6B2B]/12 cursor-default group"
-            >
-              <motion.div
-                className="text-3xl mb-4 inline-block"
-                whileHover={{ scale: 1.15, rotate: -5 }}
-              >
-                {f.icon}
-              </motion.div>
-              <h3 className="font-[family-name:var(--font-outfit)] text-lg font-bold mb-2">{f.title}</h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{f.desc}</p>
+          <div className="tagline">
+            <span className="tagline-icon">✦</span>
+            THE POWER IS IN YOUR STRATEGY
+          </div>
+
+          <h1 className="hero-title">
+            <span className="title-gradient">India Election</span>
+            <br />
+            <span className="title-white">Simulator</span>
+            <motion.span
+              className="title-dot"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >.</motion.span>
+          </h1>
+
+          <p className="hero-sub">
+            AI-powered civic education game built on real
+            <br />
+            2024 Lok Sabha data. Make decisions. See impacts.
+            <br />
+            Change the outcome.
+          </p>
+
+          <div className="hero-cta">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Link href="/login" className="btn-primary-glow">
+                Start Simulation <span className="btn-arrow">→</span>
+              </Link>
             </motion.div>
-          ))}
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <button className="btn-outline-demo">
+                <span className="play-icon">▶</span> Watch Demo
+              </button>
+            </motion.div>
+          </div>
         </motion.div>
 
-        <div className="mt-20 pb-10 text-xs text-[var(--text-muted)]">
-          Built with real 2024 election data • 42 parties • Educational purpose only
+        {/* CENTER — India Map */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+          className="hero-center"
+        >
+          <IndiaMap />
+        </motion.div>
+
+        {/* RIGHT — Live Results */}
+        <div className="hero-right">
+          <LiveResultsPanel />
         </div>
       </section>
+
+      {/* ═══ POLITICAL CLIMATE STRIP ═══ */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0, duration: 0.7 }}
+        className="climate-strip"
+      >
+        {/* Label card */}
+        <div className="climate-label-card">
+          <div className="climate-label-top">TODAY&apos;S</div>
+          <div className="climate-label-main">POLITICAL<br />CLIMATE</div>
+          <div className="climate-label-live">
+            <span className="live-dot-sm" /> Live Insights
+          </div>
+        </div>
+
+        {/* Climate info cards */}
+        {CLIMATE_CARDS.map((card, i) => (
+          <motion.div
+            key={card.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 + i * 0.1 }}
+            whileHover={{ scale: 1.03, y: -3 }}
+            className="climate-card"
+          >
+            <div className="climate-card-icon" style={{ color: card.tagColor }}>{card.icon}</div>
+            <div className="climate-card-content">
+              <h4 className="climate-card-title">{card.title}</h4>
+              <p className="climate-card-sub">{card.sub}</p>
+            </div>
+            <div className="climate-card-tag" style={{ color: card.tagColor, borderColor: `${card.tagColor}30`, background: `${card.tagColor}10` }}>
+              {card.tag}
+            </div>
+          </motion.div>
+        ))}
+      </motion.section>
+
+      {/* ═══ BOTTOM STATS ═══ */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.4, duration: 0.7 }}
+        className="bottom-stats"
+      >
+        {STATS.map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6 + i * 0.1 }}
+            whileHover={{ scale: 1.04, y: -4 }}
+            className="stat-card"
+          >
+            <div className="stat-card-icon" style={{ color: stat.color }}>
+              {stat.icon}
+            </div>
+            <div className="stat-card-body">
+              <div className="stat-card-value" style={{ color: stat.color }}>
+                <AnimatedCounter target={stat.value} />
+              </div>
+              <div className="stat-card-label">{stat.label}</div>
+              <div className="stat-card-sub">{stat.sub}</div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.section>
+
+      {/* Footer accent */}
+      <div className="landing-footer">
+        Built with real 2024 election data • 42 parties • Educational purpose only
+      </div>
     </main>
   );
 }
