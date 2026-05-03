@@ -468,3 +468,701 @@ body {
   .glass-card-sm { border-radius: 12px; }
   .btn-saffron { padding: 12px 24px; border-radius: 12px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LANDING PAGE — FUTURISTIC DASHBOARD UI
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.landing-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* ─── Top Navbar ────────────────────────────────────────────────────── */
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.nav-left { display: flex; align-items: center; gap: 12px; }
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 24px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,107,43,0.08);
+  border: 1px solid rgba(255,107,43,0.2);
+  border-radius: 12px;
+}
+
+.logo-text {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.logo-accent {
+  background: linear-gradient(135deg, #FF6B2B, #FF9933);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+
+.nav-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.live-tag {
+  background: rgba(19,136,8,0.08);
+  border: 1px solid rgba(19,136,8,0.2);
+  color: #1BA80E;
+}
+
+.year-tag {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-secondary);
+}
+
+.live-dot-sm {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #1BA80E;
+  box-shadow: 0 0 8px rgba(19,136,8,0.6);
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(19,136,8,0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 12px rgba(19,136,8,0.8); }
+}
+
+/* ─── Hero Section — 3 Column ──────────────────────────────────────── */
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.85fr;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 36px 24px;
+  min-height: 520px;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-right: 12px;
+}
+
+.tagline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #FF6B2B;
+  text-transform: uppercase;
+}
+
+.tagline-icon {
+  font-size: 14px;
+  animation: spin-slow 12s linear infinite;
+}
+
+.hero-title {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: clamp(38px, 4.5vw, 64px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #FF6B2B 0%, #FFFFFF 50%, #138808 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-white {
+  color: rgba(255,255,255,0.9);
+}
+
+.title-dot {
+  color: #FF6B2B;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.hero-sub {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 340px;
+}
+
+.hero-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.btn-primary-glow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #FF6B2B, #FF9933);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:
+    0 4px 24px rgba(255,107,43,0.35),
+    0 1px 0 rgba(255,255,255,0.15) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent 60%);
+  border-radius: inherit;
+}
+
+.btn-primary-glow:hover {
+  box-shadow:
+    0 8px 40px rgba(255,107,43,0.5),
+    0 1px 0 rgba(255,255,255,0.2) inset;
+  transform: translateY(-2px);
+}
+
+.btn-arrow {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.btn-primary-glow:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.btn-outline-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-demo:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.03);
+}
+
+.play-icon {
+  font-size: 10px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ─── India Map ────────────────────────────────────────────────────── */
+.hero-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.india-map-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ambient glow behind the map */
+.map-ambient-glow {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 107, 43, 0.08) 0%,
+    rgba(0, 188, 212, 0.04) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  animation: map-glow-breathe 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes map-glow-breathe {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* The actual map image */
+.india-map-image {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 30px rgba(255, 107, 43, 0.12))
+    drop-shadow(0 0 60px rgba(0, 188, 212, 0.06));
+  animation: map-float 8s ease-in-out infinite;
+}
+
+@keyframes map-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ─── Live Results Panel ───────────────────────────────────────────── */
+.hero-right {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.live-results-panel {
+  background: rgba(12, 16, 32, 0.75);
+  backdrop-filter: blur(30px) saturate(1.4);
+  -webkit-backdrop-filter: blur(30px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 22px 20px;
+  width: 100%;
+  max-width: 310px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.04) inset,
+    0 12px 48px rgba(0,0,0,0.4);
+}
+
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.live-dot-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #E74C3C;
+  box-shadow: 0 0 10px rgba(231,76,60,0.6);
+  animation: pulse-live 1.5s ease-in-out infinite;
+}
+
+.panel-title {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+.panel-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 16px;
+}
+
+/* Party rows */
+.party-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.party-row {
+  display: grid;
+  grid-template-columns: 36px 50px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: all 0.3s ease;
+}
+
+.party-row:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.party-icon {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1px solid;
+}
+
+.party-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.party-seats {
+  text-align: right;
+}
+
+.seats-value {
+  font-family: var(--font-space), monospace;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.party-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.trend-up {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1BA80E;
+}
+
+.party-pct {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Seat distribution bar */
+.seat-bar-container {
+  margin-top: 4px;
+}
+
+.seat-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+  gap: 1px;
+}
+
+.seat-bar-segment {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.majority-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FFD700;
+}
+
+/* ─── Political Climate Strip ──────────────────────────────────────── */
+.climate-strip {
+  display: grid;
+  grid-template-columns: 0.7fr repeat(4, 1fr);
+  gap: 12px;
+  padding: 0 36px;
+  margin-top: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.climate-label-card {
+  background: rgba(12, 16, 32, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.climate-label-top {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.climate-label-main {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.climate-label-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #1BA80E;
+  margin-top: 6px;
+}
+
+.climate-card {
+  background: rgba(12, 16, 32, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+.climate-card:hover {
+  border-color: rgba(255,255,255,0.1);
+  background: rgba(12, 16, 32, 0.7);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.climate-card-icon {
+  font-size: 22px;
+}
+
+.climate-card-content {
+  flex: 1;
+}
+
+.climate-card-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.climate-card-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  white-space: pre-line;
+  margin: 0;
+}
+
+.climate-card-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+  margin-top: auto;
+}
+
+/* ─── Bottom Stats ─────────────────────────────────────────────────── */
+.bottom-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 20px 36px 0;
+  position: relative;
+  z-index: 10;
+}
+
+.stat-card {
+  background: rgba(12, 16, 32, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 18px;
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: default;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+.stat-card:hover {
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  background: rgba(12, 16, 32, 0.75);
+}
+
+.stat-card-icon {
+  font-size: 32px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.stat-card-body {
+  flex: 1;
+}
+
+.stat-card-value {
+  font-family: var(--font-space), monospace;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.stat-card-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.stat-card-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ─── Footer ───────────────────────────────────────────────────────── */
+.landing-footer {
+  text-align: center;
+  padding: 28px 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 10;
+  letter-spacing: 0.03em;
+}
+
+/* ─── Responsive: Landing Page ─────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .hero-section {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .hero-right {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+  .live-results-panel {
+    max-width: 100%;
+  }
+  .party-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .climate-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .climate-label-card {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-navbar { padding: 12px 16px; }
+  .hero-section {
+    grid-template-columns: 1fr;
+    padding: 20px 16px;
+    min-height: auto;
+  }
+  .hero-left { text-align: center; align-items: center; }
+  .hero-sub { text-align: center; }
+  .hero-cta { flex-direction: column; }
+  .india-map-container { max-width: 320px; }
+  .climate-strip {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+  .bottom-stats {
+    grid-template-columns: 1fr 1fr;
+    padding: 16px;
+  }
+  .stat-card-value { font-size: 28px; }
+}
