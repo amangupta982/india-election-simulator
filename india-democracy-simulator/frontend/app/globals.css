@@ -1,0 +1,343 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INDIA ELECTION SIMULATOR — DESIGN SYSTEM
+   Premium dark theme with Indian tricolor accents
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Core palette ─── */
+  --saffron: #FF6B2B;
+  --saffron-light: #FF8F5E;
+  --saffron-dark: #E55A1B;
+  --india-green: #138808;
+  --india-green-light: #1BA80E;
+  --chakra-blue: #000080;
+  --danger: #C0392B;
+  --danger-light: #E74C3C;
+
+  /* ─── Party colors ─── */
+  --bjp-saffron: #FF9933;
+  --congress-cyan: #00BCD4;
+  --sp-red: #E60000;
+  --tmc-green: #00A651;
+  --dmk-red: #CC0000;
+
+  /* ─── Surfaces ─── */
+  --bg-base: #0A0F1E;
+  --bg-elevated: #111827;
+  --bg-card: #1A1F35;
+  --bg-card-hover: #222842;
+  --bg-input: #0D1225;
+
+  /* ─── Borders & Glass ─── */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.10);
+  --border-glow: rgba(255, 107, 43, 0.4);
+  --glass-bg: rgba(17, 24, 39, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* ─── Typography ─── */
+  --text-primary: #F0F0F5;
+  --text-secondary: #8B8FA3;
+  --text-muted: #4A4E69;
+  --text-accent: #FF6B2B;
+
+  /* ─── Gradients ─── */
+  --gradient-saffron: linear-gradient(135deg, #FF6B2B, #FF8F5E);
+  --gradient-saffron-full: linear-gradient(135deg, #FF6B2B 0%, #FF9933 50%, #FFB366 100%);
+  --gradient-tricolor: linear-gradient(135deg, #FF6B2B, #FFFFFF 50%, #138808);
+  --gradient-card: linear-gradient(145deg, rgba(26, 31, 53, 0.9), rgba(17, 24, 39, 0.95));
+  --gradient-win: linear-gradient(135deg, #138808, #1BA80E);
+  --gradient-loss: linear-gradient(135deg, #C0392B, #E74C3C);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 43, 0.25) transparent;
+}
+
+body {
+  background: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse at 15% 30%, rgba(255, 107, 43, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 15%, rgba(0, 0, 128, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(19, 136, 8, 0.03) 0%, transparent 50%);
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+/* ─── Glassmorphism Cards ──────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.glass-card-sm {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-glow {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 107, 43, 0.2);
+  border-radius: 20px;
+  box-shadow:
+    0 0 30px rgba(255, 107, 43, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-glow:hover {
+  border-color: rgba(255, 107, 43, 0.35);
+  box-shadow:
+    0 0 50px rgba(255, 107, 43, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────────────── */
+.btn-saffron {
+  background: var(--gradient-saffron);
+  color: white;
+  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 24px rgba(255, 107, 43, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-saffron::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 60%);
+  border-radius: inherit;
+}
+
+.btn-saffron:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 40px rgba(255, 107, 43, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-saffron:active {
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+/* ─── Choice Buttons ───────────────────────────────────────────────────── */
+.choice-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--gradient-saffron);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.choice-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-glow);
+  transform: translateX(6px);
+  box-shadow: 0 4px 24px rgba(255, 107, 43, 0.08);
+}
+
+.choice-btn:hover::before {
+  opacity: 1;
+}
+
+/* ─── Animations ───────────────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 43, 0.3); }
+  50% { box-shadow: 0 0 24px rgba(255, 107, 43, 0.6); }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-25px) scale(1.1); opacity: 0.7; }
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+@keyframes count-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.count-pulse {
+  animation: count-pulse 0.4s ease-out;
+}
+
+/* ─── Seat Bar ─────────────────────────────────────────────────────────── */
+.seat-bar-fill {
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Badge variants ───────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-crisis { background: rgba(192, 57, 43, 0.15); color: #E74C3C; border: 1px solid rgba(192, 57, 43, 0.3); }
+.badge-rally { background: rgba(255, 107, 43, 0.15); color: #FF8F5E; border: 1px solid rgba(255, 107, 43, 0.3); }
+.badge-alliance { background: rgba(0, 188, 212, 0.15); color: #00BCD4; border: 1px solid rgba(0, 188, 212, 0.3); }
+.badge-scam { background: rgba(192, 57, 43, 0.15); color: #E74C3C; border: 1px solid rgba(192, 57, 43, 0.3); }
+.badge-media { background: rgba(156, 136, 255, 0.15); color: #9C88FF; border: 1px solid rgba(156, 136, 255, 0.3); }
+.badge-booth { background: rgba(19, 136, 8, 0.15); color: #1BA80E; border: 1px solid rgba(19, 136, 8, 0.3); }
+.badge-caste_coalition { background: rgba(255, 153, 51, 0.15); color: #FF9933; border: 1px solid rgba(255, 153, 51, 0.3); }
+.badge-regional_defense { background: rgba(0, 102, 204, 0.15); color: #4DA6FF; border: 1px solid rgba(0, 102, 204, 0.3); }
+.badge-opposition_research { background: rgba(156, 136, 255, 0.15); color: #9C88FF; border: 1px solid rgba(156, 136, 255, 0.3); }
+.badge-win { background: rgba(19, 136, 8, 0.15); color: #1BA80E; border: 1px solid rgba(19, 136, 8, 0.3); }
+.badge-loss { background: rgba(192, 57, 43, 0.15); color: #E74C3C; border: 1px solid rgba(192, 57, 43, 0.3); }
+
+/* ─── Progress dots ────────────────────────────────────────────────────── */
+.week-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  transition: all 0.3s ease;
+}
+
+.week-dot.active {
+  background: var(--saffron);
+  border-color: var(--saffron);
+  box-shadow: 0 0 12px rgba(255, 107, 43, 0.5);
+}
+
+.week-dot.completed {
+  background: var(--india-green);
+  border-color: var(--india-green);
+}
+
+/* ─── Input fields ─────────────────────────────────────────────────────── */
+.input-field {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 14px 18px;
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+.input-field:focus {
+  border-color: rgba(255, 107, 43, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.08);
+}
+
+/* ─── Table styles ─────────────────────────────────────────────────────── */
+.table-row-gold { background: linear-gradient(90deg, rgba(255, 215, 0, 0.06), transparent); }
+.table-row-silver { background: linear-gradient(90deg, rgba(192, 192, 192, 0.05), transparent); }
+.table-row-bronze { background: linear-gradient(90deg, rgba(205, 127, 50, 0.05), transparent); }
+
+/* ─── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .glass-card { border-radius: 16px; }
+  .glass-card-sm { border-radius: 12px; }
+  .btn-saffron { padding: 12px 24px; border-radius: 12px; }
+}
