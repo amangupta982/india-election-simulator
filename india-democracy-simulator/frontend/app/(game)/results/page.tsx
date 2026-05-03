@@ -6,25 +6,22 @@ import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { getPostMortem } from "@/lib/api";
 import SeatTallyBar from "@/components/seat-tally";
+import { AnimatedNumber } from "@/components/ui/premium";
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { token, gameState, seatHistory } = useGameStore();
+  const { token, gameState } = useGameStore();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [postMortem, setPostMortem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [revealStep, setRevealStep] = useState(0);
 
   useEffect(() => {
-    if (!token || !gameState) {
-      router.push("/");
-      return;
-    }
+    if (!token || !gameState) { router.push("/"); return; }
     const fetchResults = async () => {
       try {
         const data = await getPostMortem(token, gameState.session_id);
         setPostMortem(data);
-        // Dramatic reveal sequence
         setTimeout(() => setRevealStep(1), 500);
         setTimeout(() => setRevealStep(2), 1500);
         setTimeout(() => setRevealStep(3), 2500);
@@ -39,17 +36,13 @@ export default function ResultsPage() {
   if (!postMortem && loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.15, 1] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="text-5xl mb-8"
-        >
+        <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-6xl mb-8">
           🗳️
         </motion.div>
         <div className="font-[family-name:var(--font-outfit)] text-2xl font-bold mb-4">Counting votes...</div>
-        <div className="w-72 h-2.5 bg-white/5 rounded-full overflow-hidden">
+        <div className="w-72 h-3 bg-white/5 rounded-full overflow-hidden">
           <motion.div
-            initial={{ width: "5%" }}
+            initial={{ width: "3%" }}
             animate={{ width: "95%" }}
             transition={{ duration: 3, ease: "easeInOut" }}
             className="h-full bg-gradient-to-r from-[#FF6B2B] to-[#FF9933] rounded-full"
@@ -61,12 +54,11 @@ export default function ResultsPage() {
   }
 
   if (!postMortem) return null;
-
   const won = postMortem.won_majority;
 
   return (
     <main className="min-h-screen pt-12 pb-24 px-4 max-w-4xl mx-auto relative">
-      {/* Background glow based on win/loss */}
+      {/* Background glow */}
       <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-[200px] pointer-events-none ${
         won ? "bg-[#138808]/[0.06]" : "bg-[#C0392B]/[0.06]"
       }`} />
@@ -76,13 +68,13 @@ export default function ResultsPage() {
         initial={{ opacity: 0, y: 40, scale: 0.9 }}
         animate={revealStep >= 1 ? { opacity: 1, y: 0, scale: 1 } : {}}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-center mb-14 relative"
+        className={`text-center mb-14 relative ${won ? "victory-glow" : ""} rounded-3xl p-8`}
       >
         <motion.div
           initial={{ scale: 0, rotate: -90 }}
           animate={revealStep >= 1 ? { scale: 1, rotate: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
-          className="text-7xl mb-6 inline-block"
+          className="text-8xl mb-6 inline-block"
         >
           {won ? "🏆" : "📉"}
         </motion.div>
@@ -93,8 +85,8 @@ export default function ResultsPage() {
         </h1>
         <p className="text-xl text-[var(--text-secondary)]">
           {postMortem.player_party} secured{" "}
-          <span className={`font-bold ${won ? "text-[#1BA80E]" : "text-[#E74C3C]"}`}>
-            {postMortem.final_seats_you}
+          <span className={`font-[family-name:var(--font-space)] font-bold ${won ? "text-[#1BA80E]" : "text-[#E74C3C]"}`}>
+            <AnimatedNumber value={postMortem.final_seats_you} />
           </span>{" "}
           seats
           {won ? " — crossing the 272 majority mark!" : ` — needed ${272 - postMortem.final_seats_you} more for majority.`}
@@ -102,11 +94,7 @@ export default function ResultsPage() {
       </motion.div>
 
       {/* ═══ Seat Tally ═══ */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={revealStep >= 2 ? { opacity: 1, y: 0 } : {}}
-        className="mb-16"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={revealStep >= 2 ? { opacity: 1, y: 0 } : {}} className="mb-16">
         <SeatTallyBar />
       </motion.div>
 
@@ -117,31 +105,27 @@ export default function ResultsPage() {
         transition={{ delay: 0.2 }}
         className="grid grid-cols-3 gap-4 mb-16"
       >
-        <div className="glass-card-sm p-6 text-center">
-          <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-2">Your Seats</div>
-          <div className="font-[family-name:var(--font-outfit)] text-4xl font-extrabold text-[#FF6B2B]">
-            {postMortem.final_seats_you}
-          </div>
-        </div>
-        <div className="glass-card-sm p-6 text-center">
-          <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-2">Opposition</div>
-          <div className="font-[family-name:var(--font-outfit)] text-4xl font-extrabold text-[#00BCD4]">
-            {postMortem.final_seats_opp}
-          </div>
-        </div>
-        <div className="glass-card-sm p-6 text-center">
-          <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-2">Margin</div>
-          <div className={`font-[family-name:var(--font-outfit)] text-4xl font-extrabold ${won ? "text-[#1BA80E]" : "text-[#E74C3C]"}`}>
-            {won ? "+" : ""}{postMortem.final_seats_you - 272}
-          </div>
-        </div>
+        {[
+          { label: "Your Seats", value: postMortem.final_seats_you, color: "#FF6B2B" },
+          { label: "Opposition", value: postMortem.final_seats_opp, color: "#00BCD4" },
+          { label: "Margin", value: postMortem.final_seats_you - 272, color: won ? "#1BA80E" : "#E74C3C", prefix: won ? "+" : "" },
+        ].map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            whileHover={{ scale: 1.04, y: -3 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="glass-card-sm p-6 text-center cursor-default"
+          >
+            <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-2">{stat.label}</div>
+            <div className="font-[family-name:var(--font-space)] text-4xl font-extrabold" style={{ color: stat.color }}>
+              <AnimatedNumber value={stat.value} prefix={stat.prefix || ""} />
+            </div>
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* ═══ Post-Mortem Sections ═══ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={revealStep >= 3 ? { opacity: 1 } : {}}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={revealStep >= 3 ? { opacity: 1 } : {}}>
         <h2 className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em] font-bold mb-6">
           📰 Election Post-Mortem
         </h2>
@@ -156,24 +140,16 @@ export default function ResultsPage() {
               transition={{ delay: idx * 0.15 }}
               className="glass-card p-8 relative overflow-hidden group"
             >
-              {/* Left accent */}
               <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${
                 won ? "bg-gradient-to-b from-[#1BA80E] to-[#138808]/30" : "bg-gradient-to-b from-[#E74C3C] to-[#C0392B]/30"
               }`} />
-              
               <h3 className="font-[family-name:var(--font-outfit)] text-[10px] font-bold tracking-[0.15em] text-[var(--text-muted)] uppercase mb-4 pl-4">
                 {section.title}
               </h3>
-              
-              <div className="text-base leading-relaxed text-white/85 mb-6 pl-4">
-                {section.content}
-              </div>
-
+              <div className="text-base leading-relaxed text-white/85 mb-6 pl-4">{section.content}</div>
               {section.civics_principles && section.civics_principles.length > 0 && (
                 <div className="bg-[var(--bg-base)] rounded-xl p-5 border border-white/5 ml-4">
-                  <div className="text-[10px] text-[#FF6B2B] font-bold mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                    📚 Civics Insight
-                  </div>
+                  <div className="text-[10px] text-[#FF6B2B] font-bold mb-2 uppercase tracking-wider flex items-center gap-1.5">📚 Civics Insight</div>
                   <ul className="space-y-1.5">
                     {section.civics_principles.map((principle: string, i: number) => (
                       <li key={i} className="text-sm text-[var(--text-secondary)] flex items-start gap-2">
@@ -196,18 +172,12 @@ export default function ResultsPage() {
         transition={{ delay: 0.5 }}
         className="mt-16 flex justify-center gap-4"
       >
-        <button
-          onClick={() => router.push("/role-select")}
-          className="btn-saffron text-base"
-        >
+        <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={() => router.push("/role-select")} className="btn-saffron text-base">
           Play Again →
-        </button>
-        <button
-          onClick={() => router.push("/leaderboard")}
-          className="btn-ghost"
-        >
+        </motion.button>
+        <motion.button whileHover={{ scale: 1.03 }} onClick={() => router.push("/leaderboard")} className="btn-ghost">
           View Leaderboard
-        </button>
+        </motion.button>
       </motion.div>
     </main>
   );

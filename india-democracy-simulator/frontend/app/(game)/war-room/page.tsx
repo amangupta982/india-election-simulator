@@ -8,33 +8,43 @@ import { submitDecision } from "@/lib/api";
 import SeatTallyBar from "@/components/seat-tally";
 import { EventCard } from "@/components/event-card";
 import { OpponentFeed } from "@/components/opponent-feed";
+import { AnimatedNumber, GaugeChart } from "@/components/ui/premium";
 
 function StatCard({ label, value, color, icon, subtitle }: {
-  label: string; value: string; color: string; icon: string; subtitle?: string;
+  label: string; value: string | number; color: string; icon: string; subtitle?: string;
 }) {
   return (
-    <div className="glass-card-sm px-5 py-4 flex items-center gap-3 group hover:border-white/10 transition-all min-w-0">
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-        style={{ background: `${color}15`, border: `1px solid ${color}25` }}>
+    <motion.div
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="glass-card-sm px-5 py-4 flex items-center gap-3 group hover:border-white/8 transition-all min-w-0 cursor-default"
+    >
+      <div
+        className="w-11 h-11 rounded-xl flex items-center justify-center text-lg flex-shrink-0 stat-icon-breathe"
+        style={{ background: `${color}12`, border: `1px solid ${color}20` }}
+      >
         {icon}
       </div>
       <div className="min-w-0">
         <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">{label}</div>
-        <div className="font-[family-name:var(--font-outfit)] text-xl font-extrabold" style={{ color }}>
-          {value}
+        <div className="font-[family-name:var(--font-space)] text-xl font-extrabold" style={{ color }}>
+          {typeof value === "number" ? <AnimatedNumber value={value} /> : value}
         </div>
         {subtitle && <div className="text-[10px] text-[var(--text-muted)]">{subtitle}</div>}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function WeekProgress({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       {Array.from({ length: total }).map((_, i) => (
-        <div
+        <motion.div
           key={i}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: i * 0.05, type: "spring" }}
           className={`week-dot ${i + 1 < current ? "completed" : i + 1 === current ? "active" : ""}`}
         />
       ))}
@@ -47,6 +57,7 @@ export default function WarRoomPage() {
   const { token, gameState, setGameState, addEvent, addOpponentMove, addSeatSnapshot, addCivicsLesson } = useGameStore();
   const [loading, setLoading] = useState(false);
   const [showEffects, setShowEffects] = useState<string | null>(null);
+  const [shakeScreen, setShakeScreen] = useState(false);
 
   useEffect(() => {
     if (!token) { router.push("/login"); return; }
@@ -61,6 +72,10 @@ export default function WarRoomPage() {
       const result: any = await submitDecision(
         token, gameState.session_id, gameState.current_event.id, choiceIndex
       );
+
+      // Impact shake effect
+      setShakeScreen(true);
+      setTimeout(() => setShakeScreen(false), 400);
 
       const seatDelta = result.effects_applied.seat_delta;
       if (seatDelta !== 0) {
@@ -87,7 +102,7 @@ export default function WarRoomPage() {
 
   if (!gameState) return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-10 h-10 border-3 border-[#FF6B2B]/30 border-t-[#FF6B2B] rounded-full animate-spin" />
+      <div className="w-12 h-12 border-3 border-[#FF6B2B]/30 border-t-[#FF6B2B] rounded-full animate-spin" />
     </div>
   );
 
@@ -95,13 +110,14 @@ export default function WarRoomPage() {
   const winColor = gameState.win_probability > 0.55 ? "#1BA80E" : gameState.win_probability > 0.35 ? "#FF9933" : "#E74C3C";
 
   return (
-    <main className="min-h-screen flex flex-col max-w-[1440px] mx-auto">
+    <main className={`min-h-screen flex flex-col max-w-[1440px] mx-auto ${shakeScreen ? "impact-shake" : ""}`}>
       {/* ═══ Top Nav Bar ═══ */}
-      <header className="px-6 py-4 border-b border-white/5 flex justify-between items-center flex-shrink-0 bg-[var(--bg-base)]/80 backdrop-blur-xl sticky top-0 z-30">
+      <header className="px-6 py-4 border-b border-white/5 flex justify-between items-center flex-shrink-0 bg-[var(--bg-base)]/70 backdrop-blur-2xl sticky top-0 z-30">
         <div className="flex items-center gap-4">
           <div>
             <h1 className="font-[family-name:var(--font-outfit)] text-xl font-bold text-white flex items-center gap-2">
-              <span className="text-[#FF6B2B]">⚡</span> War Room
+              <motion.span animate={{ rotate: [0, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className="text-[#FF6B2B]">⚡</motion.span>
+              War Room
             </h1>
             <div className="flex items-center gap-3 mt-0.5">
               <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
@@ -115,18 +131,21 @@ export default function WarRoomPage() {
 
         <div className="text-right">
           <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Week</span>
-          <div className="font-[family-name:var(--font-outfit)] text-2xl font-extrabold text-white">
-            {gameState.week_number}<span className="text-[var(--text-muted)] text-lg">/8</span>
+          <div className="font-[family-name:var(--font-space)] text-2xl font-extrabold text-white">
+            <AnimatedNumber value={gameState.week_number} /><span className="text-[var(--text-muted)] text-lg">/8</span>
           </div>
         </div>
       </header>
 
-      {/* ═══ Stats Row ═══ */}
-      <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-3 flex-shrink-0">
-        <StatCard label="Campaign Budget" value={`₹${gameState.budget_remaining}Cr`} color="#00BCD4" icon="💰" />
-        <StatCard label="Approval Rating" value={`${Math.round(gameState.approval_rating)}%`} color={approvalColor} icon="📊" />
-        <StatCard label="Win Probability" value={`${Math.round(gameState.win_probability * 100)}%`} color={winColor} icon="🎯" />
-        <StatCard label="Decisions Made" value={`${gameState.decisions_made}`} color="#9C88FF" icon="📝" subtitle={`of ${gameState.total_weeks} weeks`} />
+      {/* ═══ Bento Dashboard ═══ */}
+      <div className="px-6 py-4 flex-shrink-0">
+        <div className="bento-grid">
+          {/* Stat cards */}
+          <StatCard label="Campaign Budget" value={`₹${gameState.budget_remaining}Cr`} color="#00BCD4" icon="💰" />
+          <StatCard label="Approval Rating" value={`${Math.round(gameState.approval_rating)}%`} color={approvalColor} icon="📊" />
+          <StatCard label="Win Probability" value={`${Math.round(gameState.win_probability * 100)}%`} color={winColor} icon="🎯" />
+          <StatCard label="Decisions Made" value={`${gameState.decisions_made}`} color="#9C88FF" icon="📝" subtitle={`of ${gameState.total_weeks} weeks`} />
+        </div>
       </div>
 
       {/* ═══ Seat Tally ═══ */}
@@ -142,9 +161,9 @@ export default function WarRoomPage() {
             {gameState.current_event ? (
               <motion.div
                 key={gameState.current_event.id}
-                initial={{ opacity: 0, x: -40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 40 }}
+                initial={{ opacity: 0, x: -40, scale: 0.97 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 40, scale: 0.97 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="flex-1 flex items-start justify-center overflow-y-auto pt-2"
               >
@@ -164,9 +183,9 @@ export default function WarRoomPage() {
               >
                 <div className="text-center">
                   <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
+                    animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="text-6xl mb-6"
+                    className="text-7xl mb-6"
                   >
                     🗳️
                   </motion.div>
@@ -185,10 +204,10 @@ export default function WarRoomPage() {
             {showEffects && (
               <motion.div
                 initial={{ opacity: 0, y: 0, scale: 0.5 }}
-                animate={{ opacity: 1, y: -120, scale: 1.2 }}
-                exit={{ opacity: 0, y: -180 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className={`absolute top-1/2 left-1/2 -translate-x-1/2 font-[family-name:var(--font-outfit)] text-3xl font-extrabold drop-shadow-lg pointer-events-none z-20 ${
+                animate={{ opacity: 1, y: -120, scale: 1.3 }}
+                exit={{ opacity: 0, y: -200 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 font-[family-name:var(--font-space)] text-4xl font-extrabold drop-shadow-[0_0_20px_currentColor] pointer-events-none z-20 ${
                   showEffects.startsWith("+") ? "text-[#1BA80E]" : "text-[#E74C3C]"
                 }`}
               >
@@ -200,6 +219,11 @@ export default function WarRoomPage() {
 
         {/* Right Sidebar */}
         <div className="flex flex-col gap-4 min-h-0">
+          {/* Gauge charts */}
+          <div className="glass-card-sm p-4 flex justify-around items-center">
+            <GaugeChart value={gameState.approval_rating} color={approvalColor} label="Approval" size={100} strokeWidth={7} />
+            <GaugeChart value={gameState.win_probability * 100} color={winColor} label="Win Prob." size={100} strokeWidth={7} />
+          </div>
           <div className="flex-1 min-h-0 overflow-hidden">
             <OpponentFeed moves={gameState.recent_opponent_moves} />
           </div>

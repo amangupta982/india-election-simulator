@@ -1,0 +1,246 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useSpring, useTransform } from "framer-motion";
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATED NUMBER TICKER
+   Numbers never snap — they roll like a stock ticker
+   ═══════════════════════════════════════════════════════════════════════════ */
+export function AnimatedNumber({
+  value,
+  prefix = "",
+  suffix = "",
+  className = "",
+  duration = 0.8,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  className?: string;
+  duration?: number;
+}) {
+  const spring = useSpring(0, { duration: duration * 1000, bounce: 0 });
+  const display = useTransform(spring, (v) => Math.round(v));
+  const [rendered, setRendered] = useState(0);
+
+  useEffect(() => {
+    spring.set(value);
+  }, [spring, value]);
+
+  useEffect(() => {
+    const unsub = display.on("change", (v) => setRendered(v));
+    return unsub;
+  }, [display]);
+
+  return (
+    <span className={`${className} ticker-flash`} key={value}>
+      {prefix}{rendered.toLocaleString()}{suffix}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GAUGE CHART (Semi-circular arc)
+   For approval rating, win probability, etc.
+   ═══════════════════════════════════════════════════════════════════════════ */
+export function GaugeChart({
+  value,
+  max = 100,
+  size = 120,
+  strokeWidth = 8,
+  color = "#FF6B2B",
+  label,
+  suffix = "%",
+}: {
+  value: number;
+  max?: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+  label?: string;
+  suffix?: string;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = Math.PI * radius; // half circle
+  const pct = Math.min(value / max, 1);
+  const offset = circumference * (1 - pct);
+
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size / 2 + 10} viewBox={`0 0 ${size} ${size / 2 + 10}`}>
+        {/* Background arc */}
+        <path
+          d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
+          className="gauge-bg"
+          strokeWidth={strokeWidth}
+        />
+        {/* Value arc */}
+        <motion.path
+          d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
+          className="gauge-ring"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="text-center -mt-4">
+        <div className="font-[family-name:var(--font-space)] text-2xl font-bold" style={{ color }}>
+          <AnimatedNumber value={Math.round(value)} suffix={suffix} />
+        </div>
+        {label && (
+          <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mt-0.5">
+            {label}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PARLIAMENT HEMICYCLE (543 dots in a semicircle)
+   ═══════════════════════════════════════════════════════════════════════════ */
+export function ParliamentChart({
+  playerSeats,
+  oppSeats,
+  playerColor = "#FF6B2B",
+  oppColor = "#00BCD4",
+  size = 320,
+}: {
+  playerSeats: number;
+  oppSeats: number;
+  playerColor?: string;
+  oppColor?: string;
+  size?: number;
+}) {
+  const total = 543;
+  const others = Math.max(0, total - playerSeats - oppSeats);
+  const dots = useRef<{ x: number; y: number; color: string }[]>([]);
+
+  if (dots.current.length === 0 || dots.current.length !== total) {
+    const newDots: { x: number; y: number; color: string }[] = [];
+    const rows = 12;
+    const cx = size / 2;
+    const cy = size / 2 + 10;
+    let placed = 0;
+    for (let row = 0; row < rows && placed < total; row++) {
+      const r = 40 + row * ((size / 2 - 50) / rows);
+      const seatsInRow = Math.min(
+        Math.floor(Math.PI * r / 8),
+        total - placed
+      );
+      for (let s = 0; s < seatsInRow && placed < total; s++) {
+        const angle = Math.PI - (s / (seatsInRow - 1 || 1)) * Math.PI;
+        const x = cx + r * Math.cos(angle);
+        const y = cy - r * Math.sin(angle);
+        let color = "#1E2240";
+        if (placed < playerSeats) color = playerColor;
+        else if (placed < playerSeats + oppSeats) color = oppColor;
+        else color = "#1E2240";
+        newDots.push({ x, y, color });
+        placed++;
+      }
+    }
+    dots.current = newDots;
+  }
+
+  // Update colors without recalculating positions
+  let idx = 0;
+  for (const dot of dots.current) {
+    if (idx < playerSeats) dot.color = playerColor;
+    else if (idx < playerSeats + oppSeats) dot.color = oppColor;
+    else dot.color = "#1E2240";
+    idx++;
+  }
+
+  return (
+    <div className="relative" style={{ width: size, height: size / 2 + 30 }}>
+      <svg width={size} height={size / 2 + 30} viewBox={`0 0 ${size} ${size / 2 + 30}`}>
+        {dots.current.map((dot, i) => (
+          <motion.circle
+            key={i}
+            cx={dot.x}
+            cy={dot.y}
+            r={2.5}
+            fill={dot.color}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.002, duration: 0.3 }}
+          />
+        ))}
+        {/* Majority line */}
+        <line
+          x1={size / 2} y1={size / 2 + 15}
+          x2={size / 2} y2={10}
+          stroke="rgba(255,255,255,0.15)"
+          strokeWidth={1}
+          strokeDasharray="4 3"
+        />
+      </svg>
+      {/* Majority label */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 text-[9px] text-[var(--text-muted)] font-semibold uppercase tracking-wider">
+        272 Majority
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPEWRITER TEXT
+   Reveals text character by character like an intelligence briefing
+   ═══════════════════════════════════════════════════════════════════════════ */
+export function TypewriterText({
+  text,
+  speed = 20,
+  className = "",
+  onComplete,
+}: {
+  text: string;
+  speed?: number;
+  className?: string;
+  onComplete?: () => void;
+}) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    setDisplayed("");
+    setDone(false);
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(interval);
+        setDone(true);
+        onComplete?.();
+      }
+    }, speed);
+    return () => clearInterval(interval);
+  }, [text, speed, onComplete]);
+
+  return (
+    <span className={className}>
+      {displayed}
+      {!done && <span className="typewriter-cursor" />}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SKELETON LOADER (Shimmer card placeholder)
+   ═══════════════════════════════════════════════════════════════════════════ */
+export function SkeletonCard({ className = "" }: { className?: string }) {
+  return (
+    <div className={`glass-card-sm p-6 ${className}`}>
+      <div className="skeleton h-3 w-1/3 mb-4" />
+      <div className="skeleton h-8 w-2/3 mb-3" />
+      <div className="skeleton h-3 w-full mb-2" />
+      <div className="skeleton h-3 w-4/5" />
+    </div>
+  );
+}

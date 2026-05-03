@@ -2,6 +2,7 @@
 
 import { useGameStore } from "@/store/gameStore";
 import { motion } from "framer-motion";
+import { AnimatedNumber, ParliamentChart } from "@/components/ui/premium";
 
 export default function SeatTallyBar() {
   const gameState = useGameStore((s) => s.gameState);
@@ -19,19 +20,23 @@ export default function SeatTallyBar() {
 
   return (
     <div className="w-full glass-card-sm p-5">
+      {/* Parliament hemicycle */}
+      <div className="flex justify-center mb-4">
+        <ParliamentChart
+          playerSeats={seat_projection_you}
+          oppSeats={seat_projection_opp}
+          size={280}
+        />
+      </div>
+
       {/* Labels */}
       <div className="flex justify-between items-end mb-3">
         <div className="flex flex-col">
           <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-1">You</span>
           <div className="flex items-baseline gap-2">
-            <motion.span
-              key={seat_projection_you}
-              initial={{ scale: 1.3, color: "#FF6B2B" }}
-              animate={{ scale: 1, color: "#FF6B2B" }}
-              className="font-[family-name:var(--font-outfit)] text-3xl font-extrabold"
-            >
-              {seat_projection_you}
-            </motion.span>
+            <span className="font-[family-name:var(--font-space)] text-3xl font-extrabold text-[#FF6B2B]">
+              <AnimatedNumber value={seat_projection_you} />
+            </span>
             <span className="text-xs text-[var(--text-muted)]">{player_party?.split(" ").map(w => w[0]).join("")}</span>
           </div>
         </div>
@@ -45,14 +50,9 @@ export default function SeatTallyBar() {
 
         <div className="flex flex-col items-end">
           <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-1">Opposition</span>
-          <motion.span
-            key={seat_projection_opp}
-            initial={{ scale: 1.3 }}
-            animate={{ scale: 1 }}
-            className="font-[family-name:var(--font-outfit)] text-3xl font-extrabold text-[#00BCD4]"
-          >
-            {seat_projection_opp}
-          </motion.span>
+          <span className="font-[family-name:var(--font-space)] text-3xl font-extrabold text-[#00BCD4]">
+            <AnimatedNumber value={seat_projection_opp} />
+          </span>
         </div>
       </div>
 
@@ -63,13 +63,13 @@ export default function SeatTallyBar() {
           className="absolute top-0 bottom-0 w-[2px] bg-white/50 z-10"
           style={{ left: `${majorityPct}%` }}
         >
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
         </div>
 
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${playerPct}%` }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
           className="h-full seat-bar-fill rounded-l-2xl relative overflow-hidden"
           style={{ background: "linear-gradient(90deg, #FF6B2B, #FF9933)" }}
         >
@@ -79,15 +79,15 @@ export default function SeatTallyBar() {
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${othersPct}%` }}
-          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
           className="h-full seat-bar-fill"
-          style={{ background: "#2A2E45" }}
+          style={{ background: "#1E2240" }}
         />
 
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${oppPct}%` }}
-          transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+          transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
           className="h-full seat-bar-fill rounded-r-2xl relative overflow-hidden"
           style={{ background: "linear-gradient(90deg, #00BCD4, #0097A7)" }}
         >

@@ -17,7 +17,7 @@ const PARTIES = [
   { name: "SP", seats: 37, color: "#E60000" },
   { name: "TMC", seats: 29, color: "#00A651" },
   { name: "DMK", seats: 22, color: "#CC0000" },
-  { name: "Others", seats: 107, color: "#4A4E69" },
+  { name: "Others", seats: 107, color: "#2A2E45" },
 ];
 
 const ROLES = [
@@ -34,12 +34,8 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
     const step = target / (duration / 16);
     const timer = setInterval(() => {
       start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
     }, 16);
     return () => clearInterval(timer);
   }, [target, duration]);
@@ -51,7 +47,7 @@ export default function LandingPage() {
     <main className="relative min-h-screen overflow-hidden">
       {/* Animated background particles */}
       <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: 40 }).map((_, i) => (
           <div
             key={i}
             className="particle"
@@ -61,21 +57,15 @@ export default function LandingPage() {
               animationDelay: `${Math.random() * 8}s`,
               animationDuration: `${5 + Math.random() * 5}s`,
               background:
-                i % 3 === 0
-                  ? "rgba(255,107,43,0.5)"
-                  : i % 3 === 1
-                  ? "rgba(19,136,8,0.5)"
-                  : "rgba(0,0,128,0.5)",
+                i % 3 === 0 ? "rgba(255,107,43,0.5)" :
+                i % 3 === 1 ? "rgba(19,136,8,0.5)" :
+                "rgba(0,0,128,0.5)",
               width: `${2 + Math.random() * 3}px`,
               height: `${2 + Math.random() * 3}px`,
             }}
           />
         ))}
       </div>
-
-      {/* Ambient glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#FF6B2B]/[0.03] blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-[#138808]/[0.03] blur-[100px] pointer-events-none" />
 
       {/* ═══ Hero Section ═══ */}
       <section className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center">
@@ -108,7 +98,11 @@ export default function LandingPage() {
           </span>
           <br />
           <span className="text-white/90">Simulator</span>
-          <span className="text-[#FF6B2B]">.</span>
+          <motion.span
+            className="text-[#FF6B2B]"
+            animate={{ opacity: [1, 0.3, 1] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >.</motion.span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -125,14 +119,16 @@ export default function LandingPage() {
           </span>
         </motion.p>
 
-        {/* CTA */}
+        {/* CTA — Magnetic hover */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.9, duration: 0.5 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
         >
           <Link href="/login">
-            <button className="btn-saffron text-lg px-12 py-5 rounded-2xl">
+            <button className="btn-saffron text-lg px-14 py-5 rounded-2xl">
               Start Simulation →
             </button>
           </Link>
@@ -145,14 +141,19 @@ export default function LandingPage() {
           transition={{ delay: 1.2, duration: 0.8 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 w-full max-w-3xl"
         >
-          {STATS.map((stat) => (
-            <div key={stat.label} className="glass-card-sm p-5 text-center group hover:border-[#FF6B2B]/20 transition-all">
-              <div className="font-[family-name:var(--font-outfit)] text-3xl md:text-4xl font-extrabold text-[#FF6B2B] group-hover:count-pulse">
+          {STATS.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              whileHover={{ scale: 1.04, y: -3 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="glass-card-sm p-5 text-center group hover:border-[#FF6B2B]/15 cursor-default"
+            >
+              <div className="font-[family-name:var(--font-space)] text-3xl md:text-4xl font-extrabold text-[#FF6B2B]">
                 <AnimatedCounter target={stat.value} />
                 {stat.suffix}
               </div>
               <div className="text-xs text-[var(--text-muted)] mt-2 uppercase tracking-wider font-medium">{stat.label}</div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
@@ -167,7 +168,6 @@ export default function LandingPage() {
             2024 Actual Results
           </p>
           <div className="flex h-10 rounded-2xl overflow-hidden border border-white/5 relative">
-            {/* Majority marker */}
             <div
               className="absolute top-0 bottom-0 w-[2px] bg-white/60 z-10 shadow-[0_0_8px_rgba(255,255,255,0.5)]"
               style={{ left: `${(272 / 543) * 100}%` }}
@@ -208,12 +208,17 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.2 + i * 0.1 }}
+              whileHover={{ scale: 1.03, y: -5 }}
               className="glass-card-glow p-6 text-left cursor-pointer group"
             >
               <div className="flex justify-between items-start mb-4">
-                <span className="text-3xl group-hover:scale-110 transition-transform duration-300 inline-block">
+                <motion.span
+                  className="text-3xl inline-block"
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   {role.icon}
-                </span>
+                </motion.span>
                 <span className={`badge ${
                   role.difficulty === "Easy" ? "badge-booth" :
                   role.difficulty === "Medium" ? "badge-rally" :
@@ -243,11 +248,21 @@ export default function LandingPage() {
             { icon: "🤖", title: "AI Opponent", desc: "Adversarial AI that counter-strategies your every move in real-time" },
             { icon: "📚", title: "Civics Education", desc: "Every decision teaches real Indian electoral mechanics and history" },
           ].map((f) => (
-            <div key={f.title} className="glass-card p-7 hover:border-[#FF6B2B]/15 transition-all duration-300 hover:-translate-y-1 group">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform inline-block">{f.icon}</div>
+            <motion.div
+              key={f.title}
+              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="glass-card p-7 hover:border-[#FF6B2B]/12 cursor-default group"
+            >
+              <motion.div
+                className="text-3xl mb-4 inline-block"
+                whileHover={{ scale: 1.15, rotate: -5 }}
+              >
+                {f.icon}
+              </motion.div>
               <h3 className="font-[family-name:var(--font-outfit)] text-lg font-bold mb-2">{f.title}</h3>
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{f.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
