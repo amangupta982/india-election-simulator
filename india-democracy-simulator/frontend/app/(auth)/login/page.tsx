@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGameStore } from "@/store/gameStore";
 import { loginUser, registerUser } from "@/lib/api";
+import GoogleSignInButton from "@/components/ui/GoogleSignInButton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -134,7 +135,23 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-8 text-center">
+        {/* Divider */}
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider">or</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+
+        {/* Google Sign-In */}
+        <GoogleSignInButton
+          onSuccess={(token, user) => {
+            setAuth(token, user);
+            router.push("/role-select");
+          }}
+          onError={(msg) => setError(msg)}
+        />
+
+        <div className="mt-6 text-center">
           <button
             onClick={() => { setIsRegister(!isRegister); setError(""); }}
             className="text-sm text-[var(--text-secondary)] hover:text-[#FF6B2B] transition-colors"

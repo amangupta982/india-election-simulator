@@ -1166,3 +1166,144 @@ body {
   }
   .stat-card-value { font-size: 28px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY — WCAG 2.1 AA COMPLIANCE
+   Skip links, focus outlines, contrast fixes, reduced-motion support
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Skip to Content Link ─────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--saffron);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 0 0 12px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 10000;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: none;
+}
+
+/* ─── Focus Visible Outlines ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #FF6B2B;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline for mouse clicks */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Specific focus styles for buttons */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #FF6B2B;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 107, 43, 0.15);
+}
+
+/* Focus styles for input fields */
+.input-field:focus-visible {
+  outline: none;
+  border-color: #FF6B2B;
+  box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.15), 0 0 20px rgba(255, 107, 43, 0.05);
+}
+
+/* ─── Color Contrast Fixes (WCAG AA ≥ 4.5:1) ──────────────────────── */
+
+/* Fix low-contrast text */
+.panel-subtitle,
+.climate-card-sub,
+.hero-sub,
+.landing-footer {
+  color: rgba(255, 255, 255, 0.75); /* Upgraded from 0.5 for AA compliance */
+}
+
+.stat-card-sub {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-card-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ─── Keyboard Navigation ──────────────────────────────────────────── */
+
+/* Make non-interactive cards keyboard-accessible */
+.climate-card:focus-visible,
+.stat-card:focus-visible {
+  outline: 2px solid #FF6B2B;
+  outline-offset: 2px;
+  transform: translateY(-3px);
+}
+
+/* Choice buttons keyboard access */
+.choice-btn:focus-visible {
+  outline: 2px solid #FF6B2B;
+  outline-offset: 2px;
+  border-color: rgba(255, 107, 43, 0.5);
+  box-shadow: 0 0 0 4px rgba(255, 107, 43, 0.12);
+}
+
+/* ─── Reduced Motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .particle { display: none; }
+  .mesh-bg::before,
+  .mesh-bg::after { animation: none; }
+  .india-map-image { animation: none; }
+  .map-ambient-glow { animation: none; }
+  .live-dot-sm { animation: none; }
+  .scan-line::after { animation: none; }
+}
+
+/* ─── High Contrast Mode ───────────────────────────────────────────── */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-bg: rgba(0, 0, 0, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --border-subtle: rgba(255, 255, 255, 0.3);
+    --text-secondary: rgba(255, 255, 255, 0.9);
+    --text-muted: rgba(255, 255, 255, 0.7);
+  }
+
+  .glass-card,
+  .glass-card-sm,
+  .glass-card-glow,
+  .live-results-panel {
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* ─── Screen Reader Only ───────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

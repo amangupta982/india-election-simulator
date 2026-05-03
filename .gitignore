@@ -67,3 +67,5 @@ yarn-error.log*
 # ─── Misc ──────────────────────────────────────────────────────────────────
 *.pem
 .gemini/
+.gcloud_config/
+.coverage

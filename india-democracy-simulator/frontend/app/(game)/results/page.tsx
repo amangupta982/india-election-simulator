@@ -109,7 +109,7 @@ export default function ResultsPage() {
           { label: "Your Seats", value: postMortem.final_seats_you, color: "#FF6B2B" },
           { label: "Opposition", value: postMortem.final_seats_opp, color: "#00BCD4" },
           { label: "Margin", value: postMortem.final_seats_you - 272, color: won ? "#1BA80E" : "#E74C3C", prefix: won ? "+" : "" },
-        ].map((stat, i) => (
+        ].map((stat) => (
           <motion.div
             key={stat.label}
             whileHover={{ scale: 1.04, y: -3 }}

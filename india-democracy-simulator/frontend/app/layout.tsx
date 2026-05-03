@@ -34,11 +34,19 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${outfit.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
     >
+      <head>
+        <meta name="theme-color" content="#06080F" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className="min-h-full flex flex-col bg-[#06080F] text-white font-[family-name:var(--font-inter)]">
+        {/* Skip to main content — accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         {/* Animated mesh gradient background */}
-        <div className="mesh-bg" />
+        <div className="mesh-bg" aria-hidden="true" />
         {/* Page content */}
-        <div className="relative z-10 flex-1 flex flex-col">
+        <div id="main-content" role="main" className="relative z-10 flex-1 flex flex-col">
           {children}
         </div>
       </body>

@@ -33,6 +33,14 @@ class Settings(BaseSettings):
     starting_approval: int = 45
     monte_carlo_iterations: int = 1000
 
+    # Google Cloud
+    gcp_project_id: str = "secure-totality-495209-f6"
+    gcs_bucket_name: str = "india-election-simulator-assets"
+    vertex_ai_location: str = "us-central1"
+    vertex_ai_model: str = "gemini-2.0-flash"
+    firebase_enabled: bool = True
+    firestore_enabled: bool = True
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "protected_namespaces": ()}
 
 

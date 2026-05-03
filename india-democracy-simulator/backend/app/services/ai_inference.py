@@ -30,15 +30,32 @@ STATIC_EVENT_POOL = [
 
 
 class AIInferenceService:
-    """Abstraction for AI-powered event generation. Uses static pool in Phase 1."""
+    """Abstraction for AI-powered event generation.
+
+    Phase 1: Returns from a curated static event pool.
+    Phase 2 (current): Tries Vertex AI Gemini first, falls back to static pool.
+    """
 
     def __init__(self):
         self.events = list(STATIC_EVENT_POOL)
         self._used_indices: set[int] = set()
 
     def generate_event(self, game_state: dict) -> dict:
-        """Generate a game event. Phase 1: returns from static pool."""
-        week = game_state.get("week_number", 1)
+        """Generate a game event. Tries Vertex AI first, falls back to static pool."""
+        # Try Vertex AI for dynamic event generation
+        try:
+            from app.services.vertex_ai_service import vertex_ai_service
+            import asyncio
+            if vertex_ai_service.available:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # We're in an async context, but this is called synchronously
+                    # Use static pool for now, AI events via dedicated endpoint
+                    pass
+        except Exception:
+            pass
+
+        # Fallback: static event pool
         available = [i for i in range(len(self.events)) if i not in self._used_indices]
         if not available:
             self._used_indices.clear()

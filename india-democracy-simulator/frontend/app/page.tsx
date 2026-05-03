@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════
    DATA
@@ -47,7 +47,7 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
     }, 16);
     return () => clearInterval(timer);
   }, [target, duration]);
-  return <>{count}</>;
+  return <span aria-live="polite" aria-atomic="true">{count}</span>;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -55,29 +55,23 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
    ═══════════════════════════════════════════════════════════════════ */
 
 function ParticleField() {
-  const [particles, setParticles] = useState<Array<{
-    left: string; top: string; delay: string; dur: string; bg: string; size: string;
-  }>>([]);
-
-  useEffect(() => {
+  const [particles] = useState(() => {
     const colors = [
       "rgba(255,107,43,0.4)", "rgba(19,136,8,0.4)",
       "rgba(0,188,212,0.3)", "rgba(156,136,255,0.3)",
     ];
-    setParticles(
-      Array.from({ length: 60 }, (_, i) => ({
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        delay: `${Math.random() * 10}s`,
-        dur: `${6 + Math.random() * 8}s`,
-        bg: colors[i % 4],
-        size: `${1.5 + Math.random() * 2.5}px`,
-      }))
-    );
-  }, []);
+    return Array.from({ length: 60 }, (_, i) => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 10}s`,
+      dur: `${6 + Math.random() * 8}s`,
+      bg: colors[i % 4],
+      size: `${1.5 + Math.random() * 2.5}px`,
+    }));
+  });
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       {particles.map((p, i) => (
         <div
           key={i}
@@ -189,11 +183,9 @@ function LiveResultsPanel() {
    ═══════════════════════════════════════════════════════════════════ */
 
 export default function LandingPage() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  useEffect(() => { setIsLoaded(true); }, []);
 
   return (
-    <main className="landing-page">
+    <main className="landing-page" aria-label="India Election Simulator - Home">
       <ParticleField />
 
       {/* ═══ TOP NAVBAR ═══ */}
@@ -202,6 +194,7 @@ export default function LandingPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="top-navbar"
+        aria-label="Main navigation"
       >
         <div className="nav-left">
           <div className="nav-logo">
@@ -221,7 +214,7 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* ═══ HERO: 3-column layout ═══ */}
-      <section className="hero-section">
+      <section className="hero-section" aria-label="Hero - Election simulator overview">
         {/* LEFT — Headline */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -255,13 +248,13 @@ export default function LandingPage() {
 
           <div className="hero-cta">
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link href="/login" className="btn-primary-glow">
-                Start Simulation <span className="btn-arrow">→</span>
+              <Link href="/login" className="btn-primary-glow" aria-label="Start election simulation">
+                Start Simulation <span className="btn-arrow" aria-hidden="true">→</span>
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <button className="btn-outline-demo">
-                <span className="play-icon">▶</span> Watch Demo
+              <button className="btn-outline-demo" aria-label="Watch demo video">
+                <span className="play-icon" aria-hidden="true">▶</span> Watch Demo
               </button>
             </motion.div>
           </div>
@@ -289,6 +282,8 @@ export default function LandingPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0, duration: 0.7 }}
         className="climate-strip"
+        aria-label="Political climate indicators"
+        role="region"
       >
         {/* Label card */}
         <div className="climate-label-card">
@@ -308,6 +303,9 @@ export default function LandingPage() {
             transition={{ delay: 1.2 + i * 0.1 }}
             whileHover={{ scale: 1.03, y: -3 }}
             className="climate-card"
+            tabIndex={0}
+            role="article"
+            aria-label={`${card.title}: ${card.tag}`}
           >
             <div className="climate-card-icon" style={{ color: card.tagColor }}>{card.icon}</div>
             <div className="climate-card-content">
@@ -327,6 +325,8 @@ export default function LandingPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4, duration: 0.7 }}
         className="bottom-stats"
+        aria-label="Key election statistics"
+        role="region"
       >
         {STATS.map((stat, i) => (
           <motion.div
@@ -352,9 +352,9 @@ export default function LandingPage() {
       </motion.section>
 
       {/* Footer accent */}
-      <div className="landing-footer">
+      <footer className="landing-footer" role="contentinfo">
         Built with real 2024 election data • 42 parties • Educational purpose only
-      </div>
+      </footer>
     </main>
   );
 }

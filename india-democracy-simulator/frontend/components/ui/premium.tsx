@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -118,11 +118,10 @@ export function ParliamentChart({
   size?: number;
 }) {
   const total = 543;
-  const others = Math.max(0, total - playerSeats - oppSeats);
-  const dots = useRef<{ x: number; y: number; color: string }[]>([]);
 
-  if (dots.current.length === 0 || dots.current.length !== total) {
-    const newDots: { x: number; y: number; color: string }[] = [];
+  // Use useMemo to compute dot positions (pure computation, no refs needed)
+  const dots = useMemo(() => {
+    const result: { x: number; y: number }[] = [];
     const rows = 12;
     const cx = size / 2;
     const cy = size / 2 + 10;
@@ -137,36 +136,30 @@ export function ParliamentChart({
         const angle = Math.PI - (s / (seatsInRow - 1 || 1)) * Math.PI;
         const x = cx + r * Math.cos(angle);
         const y = cy - r * Math.sin(angle);
-        let color = "#1E2240";
-        if (placed < playerSeats) color = playerColor;
-        else if (placed < playerSeats + oppSeats) color = oppColor;
-        else color = "#1E2240";
-        newDots.push({ x, y, color });
+        result.push({ x, y });
         placed++;
       }
     }
-    dots.current = newDots;
-  }
+    return result;
+  }, [size]);
 
-  // Update colors without recalculating positions
-  let idx = 0;
-  for (const dot of dots.current) {
-    if (idx < playerSeats) dot.color = playerColor;
-    else if (idx < playerSeats + oppSeats) dot.color = oppColor;
-    else dot.color = "#1E2240";
-    idx++;
-  }
+  // Derive colors from props (no mutation needed)
+  const getColor = (idx: number) => {
+    if (idx < playerSeats) return playerColor;
+    if (idx < playerSeats + oppSeats) return oppColor;
+    return "#1E2240";
+  };
 
   return (
     <div className="relative" style={{ width: size, height: size / 2 + 30 }}>
       <svg width={size} height={size / 2 + 30} viewBox={`0 0 ${size} ${size / 2 + 30}`}>
-        {dots.current.map((dot, i) => (
+        {dots.map((dot, i) => (
           <motion.circle
             key={i}
             cx={dot.x}
             cy={dot.y}
             r={2.5}
-            fill={dot.color}
+            fill={getColor(i)}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.002, duration: 0.3 }}
@@ -204,24 +197,27 @@ export function TypewriterText({
   className?: string;
   onComplete?: () => void;
 }) {
-  const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    setDisplayed("");
-    setDone(false);
+    // Reset and start interval when text changes
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCharIndex(0);
     let i = 0;
     const interval = setInterval(() => {
       i++;
-      setDisplayed(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(interval);
-        setDone(true);
         onComplete?.();
       }
+      setCharIndex((prev) => Math.min(prev + 1, text.length));
     }, speed);
     return () => clearInterval(interval);
-  }, [text, speed, onComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, speed]);
+
+  const displayed = text.slice(0, charIndex);
+  const done = charIndex >= text.length;
 
   return (
     <span className={className}>

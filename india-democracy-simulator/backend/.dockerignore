@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+india_democracy_sim.db
+.git/
+.DS_Store
